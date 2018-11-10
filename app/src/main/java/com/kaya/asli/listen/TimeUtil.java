@@ -1,8 +1,10 @@
 package com.kaya.asli.listen;
 
 public class TimeUtil{
+    
     private TimeUtil() {
     }
+
     public static String millisecondsToFormattedTime(long milliseconds) {
 
         final long millis = milliseconds % 1000;
@@ -12,6 +14,4 @@ public class TimeUtil{
 
         return String.format("%02d:%02d:%02d:%02d", hour, minute, second, millis);
     }
-
-    public static String
 }
