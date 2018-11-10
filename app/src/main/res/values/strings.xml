@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Listen</string>
+    <string name="choose_audio_file">Choose an mp3 file from your device</string>
 </resources>
