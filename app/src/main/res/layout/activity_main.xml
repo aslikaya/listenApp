@@ -8,11 +8,11 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/activity_main_button_choose_file"
+        android:id="@+id/activity_main_button_pick_random_audio_file"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:text="@string/choose_audio_file"
+        android:text="@string/pick_random_audio_file"
         android:textAllCaps="false" />
 
     <ImageButton
@@ -21,7 +21,7 @@
         android:layout_marginTop="@dimen/vertical_margin_between_widgets"
         android:contentDescription="@string/play"
         android:src="@drawable/ic_action_play"
-        app:layout_constraintTop_toBottomOf="@+id/activity_main_button_choose_file" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageButton
         android:id="@+id/activity_main_button_stop"
@@ -31,6 +31,13 @@
         android:contentDescription="@string/stop"
         android:src="@drawable/ic_action_stop"
         app:layout_constraintLeft_toRightOf="@id/activity_main_button_play"
-        app:layout_constraintTop_toBottomOf="@id/activity_main_button_choose_file" />
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <SeekBar
+        android:id="@+id/activity_main_seek_bar_audio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/vertical_margin_between_widgets"
+        app:layout_constraintBottom_toTopOf="@id/activity_main_button_play"/>
 
 </android.support.constraint.ConstraintLayout>
