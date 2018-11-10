@@ -15,12 +15,31 @@
         android:text="@string/pick_random_audio_file"
         android:textAllCaps="false" />
 
+    <TextView
+        android:id="@+id/activity_main_text_view_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin_between_widgets"
+        android:text="@string/title"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/activity_main_button_pick_random_audio_file" />
+
+    <TextView
+        android:id="@+id/activity_main_text_view_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin_between_widgets"
+        android:text="@string/duration"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/activity_main_text_view_title" />
+
     <ImageButton
         android:id="@+id/activity_main_button_play"
         style="@style/ImageButtonStyle"
         android:layout_marginTop="@dimen/vertical_margin_between_widgets"
         android:contentDescription="@string/play"
         android:src="@drawable/ic_action_play"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageButton
@@ -30,14 +49,17 @@
         android:layout_marginTop="@dimen/vertical_margin_between_widgets"
         android:contentDescription="@string/stop"
         android:src="@drawable/ic_action_stop"
-        app:layout_constraintLeft_toRightOf="@id/activity_main_button_play"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/activity_main_button_play" />
 
-    <SeekBar
-        android:id="@+id/activity_main_seek_bar_audio"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/activity_main_text_view_elapsed_time"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/vertical_margin_between_widgets"
-        app:layout_constraintBottom_toTopOf="@id/activity_main_button_play"/>
+        android:text="@string/elapsed_time"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/activity_main_button_play" />
 
 </android.support.constraint.ConstraintLayout>

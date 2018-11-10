@@ -14,26 +14,40 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements
         View.OnClickListener,
-        MediaPlayer.OnPreparedListener {
+        MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnCompletionListener {
 
     private static final String MIME_TYPE_MP3 = "audio/mpeg";
     private static final int PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE = 5;
+    private static final int REFRESH_ELAPSED_TIME_PERIOD_MS = 1000;
 
     private Button buttonPickRandomAudioFile;
     private ImageButton buttonPlay;
     private ImageButton buttonStop;
     private MediaPlayer mediaPlayer;
+    private TextView textViewTitle;
+    private TextView textViewDuration;
+    private TextView textViewElapsedTime;
 
     private Uri audioUri;
+    private ScheduledExecutorService scheduledExecutorService;
+    private Runnable updateElapsedTimeRunnable;
+    private String title;
+    private Long duration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements
         buttonPlay.setOnClickListener(this);
         buttonStop = findViewById(R.id.activity_main_button_stop);
         buttonStop.setOnClickListener(this);
+        textViewTitle = findViewById(R.id.activity_main_text_view_title);
+        textViewDuration = findViewById(R.id.activity_main_text_view_duration);
+        textViewElapsedTime = findViewById(R.id.activity_main_text_view_elapsed_time);
 
     }
 
@@ -79,16 +96,25 @@ public class MainActivity extends AppCompatActivity implements
             }
             while (musicCursor.moveToNext());
 
-            // TODO show info in UI
-            String title = musicCursor.getString(titleColumn);
+            title = musicCursor.getString(titleColumn);
             long id = musicCursor.getLong(idColumn);
-            long duration = musicCursor.getLong(durationColumn);
+            duration = musicCursor.getLong(durationColumn);
 
             audioUri = ContentUris.withAppendedId(
                     android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
 
             musicCursor.close();
+
+            arrangeWidgetVisibility();
         }
+    }
+
+    private void arrangeWidgetVisibility() {
+        buttonPlay.setVisibility(View.VISIBLE);
+        buttonStop.setVisibility(View.VISIBLE);
+        textViewTitle.setVisibility(title != null ? View.VISIBLE : View.GONE);
+        textViewDuration.setVisibility(duration != null ? View.VISIBLE : View.GONE);
+        updateMetaData();
     }
 
     @Override
@@ -100,6 +126,10 @@ public class MainActivity extends AppCompatActivity implements
                 pickRandomAudioFileFromDevice();
             } else {
                 requestPermissionAccessDeviceStorage();
+            }
+
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
             }
 
 
@@ -151,6 +181,41 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onPrepared(MediaPlayer mp) {
         mediaPlayer.start();
+        startUpdatingCallbackWithPosition();
+    }
+
+    private void updateMetaData() {
+        textViewTitle.setText(getString(R.string.title, title));
+        textViewDuration.setText(getString(R.string.duration, TimeUtil.millisecondsToFormattedTime(duration)));
+    }
+
+    private void startUpdatingCallbackWithPosition() {
+        textViewElapsedTime.setVisibility(View.VISIBLE);
+
+        if (scheduledExecutorService == null) {
+            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        }
+
+        if (updateElapsedTimeRunnable == null) {
+            updateElapsedTimeRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                        textViewElapsedTime.setText(
+                                getString(R.string.elapsed_time, mediaPlayer.getCurrentPosition()));
+                        Log.d(MainActivity.class.getSimpleName(), Integer.toString(mediaPlayer.getCurrentPosition()));
+                    }
+
+                }
+            };
+        }
+
+        scheduledExecutorService.scheduleAtFixedRate(
+                updateElapsedTimeRunnable,
+                0,
+                REFRESH_ELAPSED_TIME_PERIOD_MS,
+                TimeUnit.MILLISECONDS
+        );
     }
 
     @Override
@@ -160,5 +225,14 @@ public class MainActivity extends AppCompatActivity implements
             mediaPlayer = null;
         }
         super.onStop();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        if (scheduledExecutorService != null) {
+            scheduledExecutorService.shutdownNow();
+            scheduledExecutorService = null;
+            updateElapsedTimeRunnable = null;
+        }
     }
 }

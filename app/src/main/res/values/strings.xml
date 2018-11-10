@@ -3,4 +3,7 @@
     <string name="pick_random_audio_file">Pick random mp3 file (from your device)</string>
     <string name="play">Play</string>
     <string name="stop">Stop</string>
+    <string name="elapsed_time">Elapsed time: %1$d</string>
+    <string name="title">Title: %1$s</string>
+    <string name="duration">Duration: %1$s</string>
 </resources>
