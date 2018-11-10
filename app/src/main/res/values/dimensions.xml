@@ -1,3 +1,7 @@
 <resources>
     <dimen name="default_layout_margin">8dp</dimen>
+    <dimen name="vertical_margin_between_widgets">16dp</dimen>
+    <dimen name="horizontal_margin_between_widgets">16dp</dimen>
+    <dimen name="padding_image_button">16dp</dimen>
+
 </resources>

@@ -13,7 +13,24 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:text="@string/choose_audio_file"
-        android:textAllCaps="false"
- />
+        android:textAllCaps="false" />
+
+    <ImageButton
+        android:id="@+id/activity_main_button_play"
+        style="@style/ImageButtonStyle"
+        android:layout_marginTop="@dimen/vertical_margin_between_widgets"
+        android:contentDescription="@string/play"
+        android:src="@drawable/ic_action_play"
+        app:layout_constraintTop_toBottomOf="@+id/activity_main_button_choose_file" />
+
+    <ImageButton
+        android:id="@+id/activity_main_button_stop"
+        style="@style/ImageButtonStyle"
+        android:layout_marginLeft="@dimen/horizontal_margin_between_widgets"
+        android:layout_marginTop="@dimen/vertical_margin_between_widgets"
+        android:contentDescription="@string/stop"
+        android:src="@drawable/ic_action_stop"
+        app:layout_constraintLeft_toRightOf="@id/activity_main_button_play"
+        app:layout_constraintTop_toBottomOf="@id/activity_main_button_choose_file" />
 
 </android.support.constraint.ConstraintLayout>
