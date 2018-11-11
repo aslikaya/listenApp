@@ -1,13 +1,18 @@
 package com.kaya.asli.listen;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -43,6 +48,24 @@ public class MainActivity extends AppCompatActivity implements
     private TextView textViewDuration;
     private TextView textViewElapsedTime;
 
+    private LocalService localService;
+    private boolean bound = false;
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            LocalService.LocalBinder binder = (LocalService.LocalBinder) service;
+            localService = binder.getService();
+            bound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            bound = false;
+        }
+    };
     private Uri audioUri;
     private ScheduledExecutorService scheduledExecutorService;
     private Runnable updateElapsedTimeRunnable;
@@ -54,6 +77,13 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeUiElements();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        final Intent intent = new Intent(this, LocalService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
     private void initializeUiElements() {
@@ -151,6 +181,10 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             mediaPlayer.prepareAsync();
+//todo implement
+//            if (bound) {
+//                LocalService.play();
+//            }
 
         } else if (v.getId() == buttonStop.getId() && mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
@@ -234,5 +268,11 @@ public class MainActivity extends AppCompatActivity implements
             scheduledExecutorService = null;
             updateElapsedTimeRunnable = null;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(connection);
+        super.onDestroy();
     }
 }
