@@ -32,9 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements
-        View.OnClickListener,
-        MediaPlayer.OnPreparedListener,
-        MediaPlayer.OnCompletionListener {
+        View.OnClickListener {
 
     private static final int PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE = 5;
     private static final int REFRESH_ELAPSED_TIME_PERIOD_MS = 1000;
@@ -42,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements
     private Button buttonPickRandomAudioFile;
     private ImageButton buttonPlay;
     private ImageButton buttonStop;
-    private MediaPlayer mediaPlayer;
     private TextView textViewTitle;
     private TextView textViewDuration;
     private TextView textViewElapsedTime;
@@ -194,63 +191,51 @@ public class MainActivity extends AppCompatActivity implements
                 PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE);
     }
 
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        mediaPlayer.start();
-        startUpdatingCallbackWithPosition();
-    }
-
     private void updateMetaData() {
         textViewTitle.setText(getString(R.string.title, title));
         textViewDuration.setText(getString(R.string.duration, TimeUtil.millisecondsToFormattedTime(duration)));
     }
 
-    private void startUpdatingCallbackWithPosition() {
-        textViewElapsedTime.setVisibility(View.VISIBLE);
+    //todo to be done via callbacks
+//    private void startUpdatingCallbackWithPosition() {
+//        textViewElapsedTime.setVisibility(View.VISIBLE);
+//
+//        if (scheduledExecutorService == null) {
+//            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+//        }
+//
+//        if (updateElapsedTimeRunnable == null) {
+//            updateElapsedTimeRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (bound) {
+//                        textViewElapsedTime.setText(
+//                                getString(R.string.elapsed_time, localService.getPlayerElapsedTimeMs()));
+//                        Log.d(MainActivity.class.getSimpleName(), Integer.toString(localService.getPlayerElapsedTimeMs()));
+//                    }
+//
+//                }
+//            };
+//        }
+//
+//        scheduledExecutorService.scheduleAtFixedRate(
+//                updateElapsedTimeRunnable,
+//                0,
+//                REFRESH_ELAPSED_TIME_PERIOD_MS,
+//                TimeUnit.MILLISECONDS
+//        );
+//    }
 
-        if (scheduledExecutorService == null) {
-            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        }
 
-        if (updateElapsedTimeRunnable == null) {
-            updateElapsedTimeRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                        textViewElapsedTime.setText(
-                                getString(R.string.elapsed_time, mediaPlayer.getCurrentPosition()));
-                        Log.d(MainActivity.class.getSimpleName(), Integer.toString(mediaPlayer.getCurrentPosition()));
-                    }
-
-                }
-            };
-        }
-
-        scheduledExecutorService.scheduleAtFixedRate(
-                updateElapsedTimeRunnable,
-                0,
-                REFRESH_ELAPSED_TIME_PERIOD_MS,
-                TimeUnit.MILLISECONDS
-        );
-    }
-
-    @Override
-    protected void onStop() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        super.onStop();
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        if (scheduledExecutorService != null) {
-            scheduledExecutorService.shutdownNow();
-            scheduledExecutorService = null;
-            updateElapsedTimeRunnable = null;
-        }
-    }
+//    //todo this is to be done via callbacks
+//    @Override
+//    public void onCompletion(MediaPlayer mp) {
+//        if (scheduledExecutorService != null) {
+//            scheduledExecutorService.shutdownNow();
+//            scheduledExecutorService = null;
+//            updateElapsedTimeRunnable = null;
+//        }
+//    }
 
     @Override
     protected void onDestroy() {

@@ -60,8 +60,8 @@ public class LocalService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
-    public Long getPlayerElapsedTimeMs() {
-        return (mediaPlayer != null && mediaPlayer.isPlaying()) ? mediaPlayer.getCurrentPosition() : 0L;
+    public int getPlayerElapsedTimeMs() {
+        return (mediaPlayer != null && mediaPlayer.isPlaying()) ? mediaPlayer.getCurrentPosition() : 0;
     }
 
     @Override
