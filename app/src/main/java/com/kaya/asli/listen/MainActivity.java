@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements
         MediaPlayer.OnPreparedListener,
         MediaPlayer.OnCompletionListener {
 
-    private static final String MIME_TYPE_MP3 = "audio/mpeg";
     private static final int PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE = 5;
     private static final int REFRESH_ELAPSED_TIME_PERIOD_MS = 1000;
 
@@ -158,36 +157,19 @@ public class MainActivity extends AppCompatActivity implements
                 requestPermissionAccessDeviceStorage();
             }
 
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                mediaPlayer.stop();
+            if (bound) {
+                localService.stop();
             }
-
 
         } else if (v.getId() == buttonPlay.getId() && audioUri != null) {
-            if (mediaPlayer == null) {
-                mediaPlayer = new MediaPlayer();
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mediaPlayer.setOnPreparedListener(this);
-                //todo handle permission wake_lock
-                //mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-            } else {
-                mediaPlayer.reset();
+            if (bound) {
+                localService.play(audioUri);
             }
 
-            try {
-                mediaPlayer.setDataSource(getApplicationContext(), audioUri);
-            } catch (IOException e) {
-                e.printStackTrace();
+        } else if (v.getId() == buttonStop.getId() ) {
+            if (bound) {
+                localService.stop();
             }
-
-            mediaPlayer.prepareAsync();
-//todo implement
-//            if (bound) {
-//                LocalService.play();
-//            }
-
-        } else if (v.getId() == buttonStop.getId() && mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.stop();
         }
     }
 
