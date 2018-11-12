@@ -60,6 +60,8 @@ public class LocalService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
+    // todo to be used after a callback is added when the activity notified an audio is played,
+    // this method will be used in activity to show remainin time
     public int getPlayerElapsedTimeMs() {
         return (mediaPlayer != null && mediaPlayer.isPlaying()) ? mediaPlayer.getCurrentPosition() : 0;
     }
@@ -73,5 +75,7 @@ public class LocalService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+
+        // todo add a callback to activity to show elapsed time using
     }
 }
